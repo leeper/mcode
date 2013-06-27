@@ -1,22 +1,9 @@
-# FUNCTION TO RECODE A NEW VARIABLE FROM MULTIPLE OLD VARIABLES
-
-# Copyright (C) 2013  Thomas J. Leeper
-# This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-
-# ... is one or more vectors of equal length
-# recodes is a 'car'-like set of recode commands
-# this is useful when, for example, a factorial experiment has the group for each factor stored as separate variables,
-# but analysis will be performed across the entire design (rather than factor-by-factor)
-# really only works for categorical variables, but a continuous variable could be collapsed with a standard recode() command before being used with this
-
-
-## STILL NEED TO FIGURE OUT A WILDCARD SYNTAX
-### AN EXAMPLE TO WORK FROM: recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,'*')=4"
-
-
 mcode <- function(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.result=TRUE, levels=NULL){
+	
+	## STILL NEED TO FIGURE OUT A WILDCARD SYNTAX
+	### AN EXAMPLE TO WORK FROM: recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,'*')=4"
+
+	
 	vars <- list(...)
 	lengths <- sapply(vars,FUN=length)
 	# check variable lengths
@@ -83,13 +70,3 @@ mcode <- function(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.r
     }
 	return(newvar)
 }
-
-# recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,1)=4;c(2,2)=5;c(2,3)=6;c(3,1)=7;c(3,2)=8;c(3,3)=9"
-# mcode(c(1,2,1,2),c(1,1,2,2), recodes=recodes)
-
-# recodes <- "c(1,1,1,1)=1;c(1,1,1,0)=2;c(1,1,0,1)=3;c(1,0,1,1)=4;c(0,1,1,1)=5"
-# mcode(c(rep(1,9),0),c(rep(0,5),rep(1,5)),c(rep(1,8),0,1),c(rep(1,5),rep(0,2),rep(1,3)), recodes=recodes)
-
-# WORK WITH MISSING VALUES:
-# mcode(c(1,1,1,1,1,NA),c(1,1,2,2,NA,1), recodes="c(1,1)=1;c(1,2)=2;c(1,NA)=3")
-
