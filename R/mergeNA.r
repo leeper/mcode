@@ -8,7 +8,7 @@ mergeNA <- function(...) {
 	a <- lapply(vars, function(x) is.na(x))
 	amat <- do.call(cbind,a)
 	# check for mutual missigness
-	mutual <- apply(!amat, 1, sum) > 1
+	mutual <- rowSums(!amat) > 1 #mutual <- apply(!amat, 1, sum) > 1
 	if(any(mutual) & sum(mutual)>=10)
 		stop("Missingness is not mutually exclusive at 10 or more indices")
 	else if(any(mutual))
