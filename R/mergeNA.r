@@ -5,9 +5,9 @@ mergeNA <- function(...) {
 	lengths <- sapply(vars,FUN=length)
 	# check variable lengths
 	if(!identical(rep(lengths[1],length(vars)), lengths))
-		stop("Vectors specified in '...' have different lengths")
+		stop("Vectors specified have different lengths")
 	# test for NAs in each vector
-	a <- do.call(cbind,a)
+	a <- do.call(cbind,vars)
 	amat <- is.na(a)
 	# check for mutual missigness
 	mutual <- rowSums(!amat) > 1 #mutual <- apply(!amat, 1, sum) > 1
@@ -21,10 +21,7 @@ mergeNA <- function(...) {
 		notNA <- lapply(seq_len(ncol(notNA)), function(i) notNA[,i])
 	# pairs of NA positions and mergeable values
 	p <- mapply(function(val,pos) val[pos], vars, notNA, SIMPLIFY=FALSE)
-	pairs <- cbind(unlist(notNA),unlist(p))
-	# start with first variable
-	out <- vars[[1]]
-	# replace NAs, if applicable with values from `pairs`
-	out[pairs[,1]] <- pairs[,2]
-	return(out)
+	# replace NAs, if applicable
+	vars[[1]][unlist(notNA)] <- unlist(p)
+	return(vars[[1]])
 }
