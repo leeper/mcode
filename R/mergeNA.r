@@ -5,8 +5,8 @@ mergeNA <- function(...) {
 	if(!identical(rep(lengths[1],length(vars)), lengths))
 		stop("Vectors specified in '...' have different lengths")
 	# test for NAs in each vector
-	a <- lapply(vars, function(x) is.na(x))
-	amat <- do.call(cbind,a)
+	a <- do.call(cbind,a)
+	amat <- is.na(a)
 	# check for mutual missigness
 	mutual <- rowSums(!amat) > 1 #mutual <- apply(!amat, 1, sum) > 1
 	if(any(mutual) & sum(mutual)>=10)
