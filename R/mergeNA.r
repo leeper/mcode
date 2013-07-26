@@ -1,5 +1,7 @@
 mergeNA <- function(...) {
 	vars <- list(...)
+	if(length(vars)==1)
+		return(vars[[1]])
 	lengths <- sapply(vars,FUN=length)
 	# check variable lengths
 	if(!identical(rep(lengths[1],length(vars)), lengths))
