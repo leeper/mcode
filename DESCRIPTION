@@ -7,4 +7,5 @@ Authors@R: c(person("Thomas", "Leeper", role = c("aut", "cre"),
 Depends: R (>= 3.0.0)
 Description: Functions to merge variables with mutually exclusive missigness (`mergeNA`) and generate new variables based on levels of multiple variables (`mcode`). Maybe more eventually.
 License: GPL-2
-URL: http://thomasleeper.com/software.html
+URL: https://github.com/leeper/mcode
+BugReports: https://github.com/leeper/mcode/issues
