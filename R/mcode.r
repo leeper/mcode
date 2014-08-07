@@ -2,7 +2,8 @@ mcode <- function(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.r
 	
 	## STILL NEED TO FIGURE OUT A WILDCARD SYNTAX
 	### AN EXAMPLE TO WORK FROM: recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,'*')=4"
-
+	
+	## CAN DEAL WITH RANGES BY HANDLING THEM FIRST, CONVERTING THEM TO CATEGORICAL, UPDATING THE `recodes` AND THEN PROCESSING AS USUAL
 	
 	vars <- list(...)
 	lengths <- sapply(vars,FUN=length)
