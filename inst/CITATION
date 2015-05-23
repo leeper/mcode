@@ -4,12 +4,12 @@ citHeader("To cite package 'mcode' in publications use:")
  vers <- paste("R package version", meta$Version)
  
  citEntry(entry="Manual",
-		  title = "mcode: Functions to merge and recode across multiple variables",
+		  title = "mcode: Functions to Merge and Recode Across Multiple Variables",
 		  author = personList(as.person("Thomas J. Leeper")),
 		  year = year,
 		  note = vers,
 		  textVersion =
 		  paste("Thomas J. Leeper (",
 				year,
-				"). mcode: Functions to merge and recode across multiple variables. ",
+				"). mcode: Functions to Merge and Recode Across Multiple Variables. ",
 				vers, ".", sep=""))

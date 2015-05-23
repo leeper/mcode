@@ -1,15 +1,14 @@
 \name{mcode-package}
 \alias{mcode-package}
-\title{Functions to merge and recode across multiple variables}
+\title{Functions to Merge and Recode Across Multiple Variables}
 \description{}
 \details{
-\tabular{ll}{
-Package: \tab mcode\cr
-Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2013-06-10\cr
-License: \tab GPL-2\cr
-}
+The package currently contains the following functions:
+
+\item{\code{\link{mcode}}}{Take several vectors as input and recode them into a single resulting vector according to a specified recoding pattern.}
+\item{\code{\link{branch}}}{Take a vector as input and convert it into a matrix of vectors based on a branching (grouping) factor.}
+\item{\code{\link{unbranch}}}{Take several vectors as input and convert them into a single, merged vector that combines across the input values, ignoring zero values by default (thus providing a reverse of \code{branch}).}
+\item{\code{\link{mergeNA}}}{A wrapper for \code{unbranch} that modifies default arguments to \code{unbranch(..., .ignore = NA, .fill = NA)}.}
 }
 \author{
 Thomas J. Leeper

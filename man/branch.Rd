@@ -1,49 +1,62 @@
 \name{branch}
 \alias{branch}
 \alias{unbranch}
-\title{Create variables from a variable and a branching factor}
-\description{Create variables from a source variable and a branching factor or recombine multiple variables with mutually exclusive missingness}
+\title{Create and recombine variables based on a branching factor}
+\description{Create and recombine variables from a source variable and a branching factor (or list of branching factors)}
 \usage{
-branch(x, f, fill = 0)
+branch(x, f, .fill = 0)
 
-unbranch(...)
+unbranch(..., .ignore = 0, .fill = 0)
 }
 \arguments{
   \item{x}{A vector containing values to be divided into new variables.}
   \item{f}{A factor in the sense that \code{as.factor(f)} defines the grouping, or a list of such factors in which case their \code{\link{interaction}} is used for the grouping.}
-  \item{fill}{A single value to use to fill in missing values in the resulting branched variables.}
-  \item{...}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have non-NA values at the same index, the function will report an error.}
+  \item{.ignore}{A (potentially multi-item) vector of values to ignore when merging across the vectors in \code{\dots}.}
+  \item{.fill}{A single value to use to fill in missing values in the resulting branched variables.}
+  \item{...}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have values at the same index that are not specified in \code{.ignore}, the function will report an error. It is also possible to pass one or more data.frames and/or matrices (which will be coerced to a list of column vectors).}
 }
-\details{These functions can be used to create dummy variables from a source variable, or to create multiple new variables from an existing variable where the values are mutually exclusive. This is useful when, for example, a survey involves two forms, with each form coded as separate variables that need to be merged together.}
+\details{These functions can be used to create dummy variables from a source variable, or to create multiple new variables from an existing variable where the values are mutually exclusive. This is useful when, for example, a survey involves two forms, with each form coded as separate variables that need to be merged together or, conversely, where a single variable contains data for different groups that need to be analyzed separately.}
 \value{
 For \code{branch}, a matrix of the same number of rows as \code{length(x)} and number of columns equal to the number of levels in \code{f}.
 
-For \code{unbranch}, a vector of length equal to all of \code{...}, which replaces missing values in the input vectors with the corresponding non-missing value from any other vector. If all vectors are NA at a given index, the result vector at that index is \code{NA}.
+For \code{unbranch}, a vector of length equal to all of \code{...}, which replaces missing values in the input vectors with the corresponding non-missing value from any other vector. If all vector items at a given position are in the \code{.ignore} set, the result vector at that index is \code{.fill}.
 }
 %\references{}
 \author{Thomas J. Leeper}
 \seealso{\code{\link{mergeNA}}}
 \examples{
 # branch a vector in a matrix and unbranch the result
-set.seed(1)
 a <- sample(1:5, 20, TRUE)
 b1 <- sample(1:2, 20, TRUE)
 b2 <- sample(1:2, 20, TRUE)
-branch(a, b1)
-branch(a, list(b1, b2))
-all.equal(a, unbranch(branch(a, list(b1, b2), fill = NA)))
+branch(a, b1) # 2-column matrix
+branch(a, list(b1, b2)) # 4-column matrix
 
-# unbranch multiple vectors
-z <- c(NA,NA,NA,NA,25,NA,NA,NA,NA,NA)
-y <- c(NA,NA,NA,14,NA,NA,17,18,19,NA)
+# unbranch from a `branch` matrix
+b <- branch(a, list(b1, b2))
+u <- unbranch(b)
+all.equal(a, u)
+
+# unbranch multiple vectors with `NA` values
 x <- c(NA,2,3,NA,NA,6,NA,NA,NA,10)
-w <- c(NA,42,43,NA,25,NA,NA,NA,NA,NA)
-unbranch(x,y)
-unbranch(x,z)
-unbranch(x,y,z)
+y <- c(NA,NA,NA,14,NA,NA,17,18,19,NA)
+z <- c(NA,NA,NA,NA,25,NA,NA,NA,NA,NA)
+unbranch(x,y, .ignore = NA)
+unbranch(x,z, .ignore = NA)
+unbranch(x,y,z, .ignore = NA)
+# equivalent to `mergeNA`
+mergeNA(x,y,z)
+
+# unbranch multiple vectors with multiple `.ignore` values
+m1 <- c(1,3,4,5,2)
+m2 <- c(0,2,2,2,4)
+unbranch(m1, m2, .ignore = c(1,2,3))
+unbranch(m1, m2, .ignore = c(1,2,3), .fill = NA)
 
 \dontrun{
-unbranch(x,w, fill = NA) # fails for non-mutual exclusive missingness
+# fails for non-mutual exclusive missingness
+w <- c(NA,42,43,NA,25,NA,NA,NA,NA,NA)
+unbranch(x, w, .fill = NA) 
 }
 }
 %\keyword{}

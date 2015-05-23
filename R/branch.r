@@ -1,63 +1,67 @@
-branch <- function(x, f, fill = 0){
-    if (is.list(f)) 
+branch <- function(x, f, .fill = 0){
+    if (is.list(f)) {
         f <- interaction(f)
-    else if (!is.factor(f)) 
+    } else if (!is.factor(f)) {
         f <- as.factor(f)
+    }
     out <- x * model.matrix(~ 0 + f)
     attr(out,'assign') <- NULL
     attr(out,'contrasts') <- NULL
-    if(!is.na(fill) && fill == 0){
+    if(!is.na(.fill) && .fill == 0){
         return(out)
-    } else if(is.na(fill)) {
+    } else if(is.na(.fill)) {
         out[out == 0] <- NA
         return(out)
     } else {
-        out[out == 0] <- fill
+        out[out == 0] <- .fill
         return(out)
     }
 }
 
-unbranch <- function(..., fill = 0){
+unbranch <- function(..., .ignore = 0, .fill = 0, .factors = c("character", "numeric")){
     vars <- list(...)
-    cls <- sapply(vars, class)
-    
-    # split matrices into column vectors
-    for(i in which(cls == 'matrix')){
+    ismat <- sapply(vars, is.matrix)
+    for(i in which(ismat)){
         tmp <- vars[[i]]
         vars[i] <- NULL
         vars <- append(vars, split(tmp, col(tmp)))
     }
-    
-    if(length(vars)==1)
+    isdf <- sapply(vars, is.data.frame)
+    for(i in which(isdf)){
+        tmp <- vars[[i]]
+        vars[i] <- NULL
+        vars <- append(vars, tmp)
+    }
+    if(length(vars) == 1)
         return(vars[[1]])
+    classes <- sapply(vars, FUN = inherits, what = "factor")
+    if(any(classes)) {
+        .factors <- match.arg(.factors)
+        if(.factors == "character") {
+            vars[classes] <- lapply(vars[classes], as.character)
+        } else {
+            vars[classes] <- lapply(vars[classes], as.numeric)
+        }
+    }
     lengths <- sapply(vars, length)
-    # check variable lengths
-    if(abs(max(lengths) - min(lengths)) > 1L)
+    if(any(lengths > lengths[1] | lengths < lengths[1]))
         stop("Vectors specified have different lengths")
-    
-    # test for `fill` values in each vector
-    if(is.na(fill)){
-        m <- unlist(lapply(vars, function(x) which(is.na(x))))
-    } else {
-        m <- unlist(lapply(vars, function(x) which(x == fill)))
-    }
-    if(any(duplicated(m))) {
-        w <- sort(unique(c(which(duplicated(z)), which(duplicated(z, fromLast = TRUE)))))
-        if(length(w) >= 10)
-            stop("Missingness is not mutually exclusive at 10 or more indices")
-        else
-            stop("Missingness is not mutually exclusive at indices ",paste(w,collapse=","))
-    }
-    
-    # positions of non-NAs in each vector
     a <- do.call(cbind, vars)
-    a_out <- apply(a, 1, function(x) {
-        u <- unique(x[!is.na(x)])
-        if(length(u) == 0)
-            return(NA)
-        else
-            return(u)
+    amat <- structure(a %in% .ignore, dim = dim(a))
+    mutual <- rowSums(!amat) > 1
+    if(any(mutual) & sum(mutual) >= 10) {
+        stop(".ignore values are not mutually exclusive at 10 or more indices")
+    } else if(any(mutual)) {
+        stop(".ignore values are not mutually exclusive at indices ",
+             paste(which(mutual), collapse=","))
+    }
+    out <- apply(a, 1, function(x) {
+        z <- x[!x %in% .ignore]
+        if(length(z)) {
+            return(z)
+        } else {
+            return(.fill)
+        }
     })
-    
-    return(a_out)
+    return(out)
 }

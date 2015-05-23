@@ -1,2 +1,4 @@
-# 2013-06-06
-exportPattern("^[[:alpha:]]+")
+export(mcode)
+export(mergeNA)
+export(branch)
+export(unbranch)
