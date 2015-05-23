@@ -23,13 +23,41 @@ This really only works for categorical variables, but a continuous variable coul
 \author{Thomas J. Leeper}
 %\seealso{}
 \examples{
-recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,1)=4;c(2,2)=5;c(2,3)=6;c(3,1)=7;c(3,2)=8;c(3,3)=9"
-mcode(c(1,2,1,2),c(1,1,2,2), recodes=recodes)
+a <- c(1,2,1,2,1,NA,2,NA)
+b <- c(1,1,2,2,NA,1,NA,2)
 
-recodes <- "c(1,1,1,1)=1;c(1,1,1,0)=2;c(1,1,0,1)=3;c(1,0,1,1)=4;c(0,1,1,1)=5"
-mcode(c(rep(1,9),0),c(rep(0,5),rep(1,5)),c(rep(1,8),0,1),c(rep(1,5),rep(0,2),rep(1,3)), recodes=recodes)
+# recode using `mcode`
+m1 <- mcode(a, b, recodes = "c(1,1)=1;c(1,2)=2;c(2,1)=3;c(2,2)=4")
+
+# compare to `ifelse`:
+m2 <- ifelse(a == 1 & b == 1, 1, 
+             ifelse(a == 1 & b == 2, 2, 
+                    ifelse(a == 2 & b == 1, 3, 
+                           ifelse(a == 2 & b == 2, 4, NA))))
+identical(m1, m2)
+
+# compare to a sequence of extraction statements
+m3 <- rep(NA, length(a))
+m3[a == 1 & b == 1] <- 1
+m3[a == 1 & b == 2] <- 2
+m3[a == 2 & b == 1] <- 3
+m3[a == 2 & b == 2] <- 4
+identical(m1, m3)
+
+# compare to interaction
+m4 <- interaction(a, b)
+levels(m4) <- c("1.1" = 1, "1.2" = 2, "2.1" = 3, "2.2" = 4)[levels(m4)]
+m4 <- as.numeric(as.character(m4))
+identical(m1, m4)
+
+r <- "c(1,1,1,1)=1;c(1,1,1,0)=2;c(1,1,0,1)=3;c(1,0,1,1)=4;c(0,1,1,1)=5"
+mcode(c(rep(1,9),0), 
+      c(rep(0,5),rep(1,5)), 
+      c(rep(1,8),0,1), 
+      c(rep(1,5),rep(0,2),rep(1,3)), 
+      recodes = r)
 
 # WORK WITH MISSING VALUES:
-mcode(c(1,1,1,1,1,NA),c(1,1,2,2,NA,1), recodes="c(1,1)=1;c(1,2)=2;c(1,NA)=3")
+mcode(c(1,1,1,1,1,NA), c(1,1,2,2,NA,1), recodes="c(1,1)=1;c(1,2)=2;c(1,NA)=3")
 }
 %\keyword{}
