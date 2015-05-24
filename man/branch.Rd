@@ -6,13 +6,14 @@
 \usage{
 branch(x, f, .fill = 0)
 
-unbranch(..., .ignore = 0, .fill = 0)
+unbranch(..., .ignore = 0, .fill = 0, .factors = c("character", "numeric"))
 }
 \arguments{
   \item{x}{A vector containing values to be divided into new variables.}
   \item{f}{A factor in the sense that \code{as.factor(f)} defines the grouping, or a list of such factors in which case their \code{\link{interaction}} is used for the grouping.}
   \item{.ignore}{A (potentially multi-item) vector of values to ignore when merging across the vectors in \code{\dots}.}
   \item{.fill}{A single value to use to fill in missing values in the resulting branched variables.}
+  \item{.factors}{A character string indicating whether to treatment factors  in \code{\dots} as character (the default) or numeric.}
   \item{...}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have values at the same index that are not specified in \code{.ignore}, the function will report an error. It is also possible to pass one or more data.frames and/or matrices (which will be coerced to a list of column vectors).}
 }
 \details{These functions can be used to create dummy variables from a source variable, or to create multiple new variables from an existing variable where the values are mutually exclusive. This is useful when, for example, a survey involves two forms, with each form coded as separate variables that need to be merged together or, conversely, where a single variable contains data for different groups that need to be analyzed separately.}

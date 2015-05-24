@@ -2,16 +2,20 @@
 \alias{mcode}
 \title{Multivariate recode}
 \description{Recode one or more vectors to a single vector}
-\usage{mcode(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.result=TRUE, levels=NULL)}
+\usage{
+mcode(..., recodes, else.val=NA, 
+      as.factor.result=NULL, as.numeric.result=TRUE, levels=NULL)
+}
 \arguments{
   \item{...}{One or more vectors of equal length.}
   \item{recodes}{A 'car'-like set of recode commands.}
   \item{else.val}{}
   \item{as.factor.result}{}
+  \item{as.numeric.result}{}
   \item{levels}{}
 }
 \details{
-Recoding is a basic step in any analysis. It's fairly easy to recode a single variable (e.g. by replacing values in the vector or using the \code{recode} function in \bold{car} or \code{mapvalues} in \bold{plyr}), but it can be cumbersome to recode multiple variables into a single vector .This is useful when, for example, a factorial experiment has the group for each factor stored as separate variables, but analysis will be performed across the entire design (rather than factor-by-factor), or when it is necessary to create a factor representing multivariate combinations of demographic groups (e.g., an age-sex-race stratification) from a set of separate input vectors representing each demographic variable. That would normally require a series of \code{\link[base]{ifesle}} statements or complex use of boolean arguments. This function aims to make it simple to create a single vector from multiple input vectors in a manner more useful than \code{\link[base]{interaction}}.
+Recoding is a basic step in any analysis. It's fairly easy to recode a single variable (e.g. by replacing values in the vector or using the \code{recode} function in \bold{car} or \code{mapvalues} in \bold{plyr}), but it can be cumbersome to recode multiple variables into a single vector .This is useful when, for example, a factorial experiment has the group for each factor stored as separate variables, but analysis will be performed across the entire design (rather than factor-by-factor), or when it is necessary to create a factor representing multivariate combinations of demographic groups (e.g., an age-sex-race stratification) from a set of separate input vectors representing each demographic variable. That would normally require a series of \code{\link[base]{ifelse}} statements or complex use of boolean arguments. This function aims to make it simple to create a single vector from multiple input vectors in a manner more useful than \code{\link[base]{interaction}}.
 
 The syntax borrows from the \code{recode} function in the \bold{car} package.
 

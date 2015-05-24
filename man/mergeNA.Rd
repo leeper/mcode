@@ -7,9 +7,9 @@ mergeNA(..., .factors = c("character", "numeric"))
 }
 \arguments{
   \item{...}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have non-NA values at the same index, the function will report an error.}
-  \item{.factors}{A character string specifying whether to coerce factors to \dQuote{character} (i.e., their level labels), which is the default, or \dQuote{numeric} (the underlying integer factor levels). This may affect the return value of the function}
+  \item{.factors}{A character string specifying whether to coerce factors in \code{\dots} to \dQuote{character} (i.e., their level labels), which is the default, or \dQuote{numeric} (the underlying integer factor levels). This may affect the return value of the function.}
 }
-\details{This is a wrapper around \code{\link{unbrach}} with the specified arguments: \code{.ignore = NA, .fill = NA}. This is useful when, for example, a survey involves two forms, with each form coded as separate variables that need to be merged together or in an experimental dataset where a single outcome measure is stored in a separate variable for each experimental condition.}
+\details{This is a wrapper around \code{\link{unbranch}} with the specified arguments: \code{.ignore = NA, .fill = NA}. This is useful when, for example, a survey involves two forms, with each form coded as separate variables that need to be merged together or in an experimental dataset where a single outcome measure is stored in a separate variable for each experimental condition.}
 \value{A vector of length equal to the inputs, with missing values replaced when available in any other vector. If all vectors are \code{NA} at a given index, the result at that index remains \code{NA}.}
 %\references{}
 \author{Thomas J. Leeper}
