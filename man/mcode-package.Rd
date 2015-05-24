@@ -1,7 +1,7 @@
 \name{mcode-package}
 \alias{mcode-package}
-\title{Functions to Merge and Recode Across Multiple Variables}
-\description{}
+\title{mcode-package}
+\description{Functions to Merge and Recode Across Multiple Variables}
 \details{
 The package currently contains the following functions:
 \itemize{

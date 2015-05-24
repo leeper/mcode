@@ -1,36 +1,83 @@
-mcode <- function(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.result=TRUE, levels=NULL){
-    ## STILL NEED TO FIGURE OUT A WILDCARD SYNTAX
-    ### AN EXAMPLE TO WORK FROM: recodes <- "c(1,1)=1;c(1,2)=2;c(1,3)=3;c(2,'*')=4"
-
+mcode <- function(..., recodes, .fill = NA, .result = c("numeric", "character", "factor"), .levels = NULL){
     
+    # process variables
     vars <- list(...)
-    lengths <- sapply(vars,FUN=length)
-    # check variable lengths
-    if(!identical(rep(lengths[1],length(vars)), lengths))
-        stop("Vectors specified in '...' have different lengths")
-    splitrecodes <- strsplit(recodes,";")[[1]]
-    # check number of vars implied by recode vectors
-    codesplit <- function(a)
-        eval(parse(text=strsplit(a,"=")[[1]][1]))
-    ncodes <- lapply(splitrecodes,FUN=function(a) length(codesplit(a)))
-    for(i in 1:length(ncodes)){
-        if(!ncodes[[i]]==length(vars))
-            stop(paste("Recode",i,"has",ncodes[[i]],"items but should have",length(vars)))
+    classes <- sapply(vars, FUN = inherits, what = "factor")
+    if(any(classes)) {
+        .factors <- match.arg(.factors)
+        if(.factors == "character") {
+            vars[classes] <- lapply(vars[classes], as.character)
+        } else {
+            vars[classes] <- lapply(vars[classes], as.numeric)
+        }
     }
-    # list of old values for each recode combination
-    oldvals <- lapply(splitrecodes,FUN=codesplit)
-    # check for duplicate recode combinations
-    dup <- duplicated(oldvals)
-    if(sum(dup)>0)
-        stop("Duplicate recodes in positions:",seq(length(dup))[dup==TRUE])
-    # list of new values for each recode combination
-    newval <- lapply(splitrecodes,FUN=function(a) strsplit(a,"=")[[1]][2])
-    # original variables as list
-    oldvar <- mapply(FUN=c,vars)
-    # create new var from original vars, based on splitrecodes
-    newvar <- vector(length=lengths[1], mode=mode(vars[[1]]))
+    lengths <- sapply(vars, FUN = length)
+    if(any(lengths > lengths[1] | lengths < lengths[1]))
+        stop("Vectors specified in '...' have different lengths")
+    oldvar <- mapply(c, vars)
+    
+    # process recodes
+    splitrecodes <- strsplit(gsub("\n|\t", "", recodes), split = ";")[[1]]
+    x <- t(sapply(splitrecodes, function(x) strsplit(x, split = "=")[[1]]))
+    outval <- unname(x[,2])
+    inval1 <- gsub("[c()]", "", unname(x[,1])) # ignore bracketing
+    inval <- unname(sapply(inval1, strsplit, split = ","))
+    rlengths <- sapply(inval, length)
+    if(any(rlengths < length(vars))) {
+        w <- which(rlengths < length(vars))
+        stop(ngettext(length(w), paste0("'recodes' entry ", w, " has less elements than ",length(vars)),
+                                 paste0("'recodes' entries ", paste0(w, sep = ","), " has less element than ",length(vars))))
+    } else if(any(rlengths > length(vars))) {
+        w <- which(rlengths > length(vars))
+        stop(ngettext(length(w), paste0("'recodes' entry ", w, " has more elements than ",length(vars)),
+                                 paste0("'recodes' entries ", paste0(w, sep = ","), " has more elements than ",length(vars))))
+    }
+    if(any(rlengths > rlengths[1] | rlengths < rlengths[1])) {
+        stop("'recodes' entries have inconsistent numbers of elements")
+    }
+    # parse special symbols
+    parse_specials <- function(specials, var) {
+        ## * - wildcard
+        specials[specials == "*"] <- "*"
+        ## NA - NA value
+        specials[specials == "NA"] <- NA
+        ## min - minimum of that variable
+        specials[specials == "min"] <- min(var, na.rm = TRUE)
+        ## max - maximum of that variable
+        specials[specials == "max"] <- max(var, na.rm = TRUE)
+        ## mean - mean of that variable
+        specials[specials == "mean"] <- mean(var, na.rm = TRUE)
+        ## median - median of that variable
+        specials[specials == "median"] <- median(var, na.rm = TRUE)
+        ## : - range of values
+        
+        return(specials)
+    }
+    
+    if(FALSE) {
+        invalmat <- matrix(character(), nrow = length(inval), ncol = rlengths[1])
+        for(i in 1:ncol(invalmat)) {
+            invalmat[,i] <- parse_specials(sapply(inval, `[`, i), vars[[i]])
+        }
+        
+        
+        sapply(seq_along(newvar), function(x) {
+            v <- sapply(vars, `[`, x)
+            
+            
+            #ranged <- grepl(":", , fixed = TRUE)
+            return(x)
+        })
+        
+        
+        apply(oldvar, 1, function(x) {
+            
+        })
+    }
+    
+    newvar <- vector(mode = "character", length = lengths[1]) # return vector
     for(i in 1:dim(oldvar)[1]){
-        check <- unlist(lapply(oldvals, FUN=function(a) {
+        check <- unlist(lapply(inval, FUN=function(a) {
                                                 s <- sum(oldvar[i,]==a,na.rm=TRUE)
                                                 # sum code to deal with NAs
                                                 if(is.na(s) || is.null(s))
@@ -52,20 +99,15 @@ mcode <- function(..., recodes, else.val=NA, as.factor.result=NULL, as.numeric.r
             }
             # check for no matches
             else if(max(check)<length(oldvar[i,]))
-                newvar[i] <- else.val
+                newvar[i] <- .fill
             else
-                newvar[i] <- newval[check==length(oldvar[i,])]
+                newvar[i] <- outval[check==length(oldvar[i,])]
         }            
     }
+    
     # format resulting variable
     newvar <- unlist(newvar)
-    if(!is.null(as.numeric.result) && as.numeric.result)
-        newvar <- as.numeric(newvar)
-    if(!is.null(as.factor.result) && as.factor.result) {
-        if(!is.null(levels))
-            newvar <- factor(newvar, levels = levels)
-        else
-            as.factor(newvar)
-    }
+    
+    newvar <- eval(call(paste0("as.", match.arg(.result)), newvar))
     return(newvar)
 }
