@@ -5,8 +5,15 @@ Title: Functions to Merge and Recode Across Multiple Variables
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"))
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
-Description: Functions to create multiple vectors from a single input vector (e.g., a matrix of indicator/dummy variables), convert a list, data.frame, or matrix of vectors into a single vector (e.g., to merge multiple vectors with mutually exclusive missingness into one), and generate new variables based on levels and combinations of multiple input vectors (e.g., to create a vector for a set of complex recodings).
-Suggests: testthat
+Description: Functions to create multiple vectors from a single input vector
+    (e.g., a matrix of indicator/dummy variables), convert a list, data.frame, or
+    matrix of vectors into a single vector (e.g., to merge multiple vectors with
+    mutually exclusive missingness into one), and generate new variables based on
+    levels and combinations of multiple input vectors (e.g., to create a vector for
+    a set of complex recodings).
+Suggests:
+    testthat
 License: GPL-2
 URL: https://github.com/leeper/mcode
 BugReports: https://github.com/leeper/mcode/issues
+RoxygenNote: 5.0.1
