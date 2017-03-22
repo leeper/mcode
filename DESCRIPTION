@@ -1,10 +1,9 @@
 Package: mcode
-Version: 0.1.3
-Date: 2015-05-24
+Version: 0.1.4
+Date: 2017-03-22
 Title: Functions to Merge and Recode Across Multiple Variables
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"))
-Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 Description: Functions to create multiple vectors from a single input vector
     (e.g., a matrix of indicator/dummy variables), convert a list, data.frame, or
     matrix of vectors into a single vector (e.g., to merge multiple vectors with

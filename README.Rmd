@@ -93,11 +93,11 @@ m4 <- as.numeric(as.character(m4))
 identical(m1, m4)
 ```
 
-## Installation ##
+## Installation
 
-[![CRAN](http://www.r-pkg.org/badges/version/mcode)](http://cran.r-project.org/package=mcode)
+[![CRAN](https://www.r-pkg.org/badges/version/mcode)](https://cran.r-project.org/package=mcode)
 [![Build Status](https://travis-ci.org/leeper/mcode.svg?branch=master)](https://travis-ci.org/leeper/mcode)
-[![codecov.io](http://codecov.io/github/leeper/mcode/coverage.svg?branch=master)](http://codecov.io/github/leeper/mcode?branch=master)
+[![codecov.io](https://codecov.io/github/leeper/mcode/coverage.svg?branch=master)](https://codecov.io/github/leeper/mcode?branch=master)
 
 This package is not yet on CRAN. To install the latest development version of **mcode** from GitHub:
 

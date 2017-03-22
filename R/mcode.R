@@ -1,7 +1,7 @@
 #' @title Multivariate recode
 #' @description Recode one or more vectors to a single vector
 #' @param \dots One or more vectors of equal length.
-#' @param recodes A 'car'-like set of recode commands.
+#' @param recodes A \sQuote{car}-like set of recode commands.
 #' @param .fill A single value to use to fill in missing values in the resulting branched variables.
 #' @param .result A character vector specifying the class of the resulting vector.
 #' @details Recoding is a basic step in any analysis. It is fairly easy to recode a single variable (e.g. by replacing values in the vector or using the \code{recode} function in \bold{car} or \code{mapvalues} in \bold{plyr}), but it can be cumbersome to recode multiple variables into a single vector .This is useful when, for example, a factorial experiment has the group for each factor stored as separate variables, but analysis will be performed across the entire design (rather than factor-by-factor), or when it is necessary to create a factor representing multivariate combinations of demographic groups (e.g., an age-sex-race stratification) from a set of separate input vectors representing each demographic variable. That would normally require a series of \code{\link[base]{ifelse}} statements or complex use of boolean arguments. This function aims to make it simple to create a single vector from multiple input vectors in a manner more useful than \code{\link[base]{interaction}}.
@@ -55,6 +55,10 @@
 #' @seealso \code{\link{mergeNA}}
 #' @export 
 mcode <- function(..., recodes, .fill = NA, .result = c("numeric", "character", "factor")){
+    
+    if (missing(recode)) {
+        stop("'recodes' is missing with no default")
+    }
     
     # process variables
     vars <- list(...)
