@@ -5,16 +5,18 @@
 \title{Multivariate recode}
 \usage{
 mcode(..., recodes, .fill = NA, .result = c("numeric", "character",
-  "factor"))
+  "factor"), .factors = c("character", "numeric"))
 }
 \arguments{
-\item{recodes}{A 'car'-like set of recode commands.}
+\item{\dots}{One or more vectors of equal length.}
+
+\item{recodes}{A \sQuote{car}-like set of recode commands.}
 
 \item{.fill}{A single value to use to fill in missing values in the resulting branched variables.}
 
 \item{.result}{A character vector specifying the class of the resulting vector.}
 
-\item{\dots}{One or more vectors of equal length.}
+\item{.factors}{A character string indicating whether to treatment factors in \code{\dots} as character (the default) or numeric.}
 }
 \value{
 A vector of length equal to the input vector(s) in \code{\dots}.
@@ -75,4 +77,3 @@ mcode(c(rep(1,9),0),
 \seealso{
 \code{\link{mergeNA}}
 }
-

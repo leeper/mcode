@@ -18,4 +18,3 @@ The package currently contains the following functions:
 \author{
 Thomas J. Leeper <thosjleeper@gmail.com>
 }
-

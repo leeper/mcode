@@ -17,11 +17,11 @@ unbranch(..., .ignore = 0, .fill = 0, .factors = c("character",
 
 \item{.fill}{A single value to use to fill in missing values in the resulting branched variables.}
 
+\item{\dots}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have values at the same index that are not specified in \code{.ignore}, the function will report an error. It is also possible to pass one or more data frames and/or matrices (which will be coerced to a list of column vectors).}
+
 \item{.ignore}{A (potentially multi-item) vector of values to ignore when merging across the vectors in \code{\dots}.}
 
-\item{.factors}{A character string indicating whether to treatment factors  in \code{\dots} as character (the default) or numeric.}
-
-\item{\dots}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have values at the same index that are not specified in \code{.ignore}, the function will report an error. It is also possible to pass one or more data.frames and/or matrices (which will be coerced to a list of column vectors).}
+\item{.factors}{A character string indicating whether to treatment factors in \code{\dots} as character (the default) or numeric.}
 }
 \value{
 For \code{branch}, a matrix of the same number of rows as \code{length(x)} and number of columns equal to the number of levels in \code{f}.
@@ -72,4 +72,3 @@ unbranch(m1, m2, .ignore = c(1,2,3), .fill = NA)
 \seealso{
 \code{\link{mergeNA}}
 }
-

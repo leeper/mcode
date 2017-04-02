@@ -7,9 +7,9 @@
 mergeNA(..., .factors = c("character", "numeric"))
 }
 \arguments{
-\item{.factors}{A character string specifying whether to coerce factors in \code{\dots} to \dQuote{character} (i.e., their level labels), which is the default, or \dQuote{numeric} (the underlying integer factor levels). This may affect the return value of the function.}
-
 \item{\dots}{Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have non-NA values at the same index, the function will report an error.}
+
+\item{.factors}{A character string specifying whether to coerce factors in \code{\dots} to \dQuote{character} (i.e., their level labels), which is the default, or \dQuote{numeric} (the underlying integer factor levels). This may affect the return value of the function.}
 }
 \value{
 A vector of length equal to the inputs, with missing values replaced when available in any other vector. If all vectors are \code{NA} at a given index, the result at that index remains \code{NA}.
@@ -48,4 +48,3 @@ mergeNA(c(1,NA,NA,NA), factor(c(NA,'a','b',NA)), .factors = "numeric")
 \seealso{
 \code{\link{unbranch}}
 }
-
