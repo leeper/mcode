@@ -5,7 +5,7 @@
 \alias{unbranch}
 \title{Create and recombine variables based on a branching factor}
 \usage{
-branch(x, f, .fill = 0)
+branch(x, f = x, .fill = 0)
 
 unbranch(..., .ignore = 0, .fill = 0, .factors = c("character",
   "numeric"))

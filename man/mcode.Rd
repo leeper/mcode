@@ -4,8 +4,8 @@
 \alias{mcode}
 \title{Multivariate recode}
 \usage{
-mcode(..., recodes, .fill = NA, .result = c("numeric", "character",
-  "factor"), .factors = c("character", "numeric"))
+mcode(..., recodes, .fill = NA, .result, .factors = c("character",
+  "numeric"))
 }
 \arguments{
 \item{\dots}{One or more vectors of equal length.}

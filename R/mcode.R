@@ -56,7 +56,7 @@
 #' @seealso \code{\link{mergeNA}}
 #' @importFrom stats median
 #' @export 
-mcode <- function(..., recodes, .fill = NA, .result = c("numeric", "character", "factor"), .factors = c("character", "numeric")){
+mcode <- function(..., recodes, .fill = NA, .result, .factors = c("character", "numeric")){
     
     # process variables
     vars <- list(...)
@@ -70,6 +70,7 @@ mcode <- function(..., recodes, .fill = NA, .result = c("numeric", "character", 
             vars[classes] <- lapply(vars[classes], as.numeric)
         }
     }
+    
     ## check variable lengths
     lengths <- sapply(vars, FUN = length)
     if (any(lengths > lengths[1L] | lengths < lengths[1L])) {
@@ -83,7 +84,18 @@ mcode <- function(..., recodes, .fill = NA, .result = c("numeric", "character", 
     parsed <- parse_recodes(recodes = recodes, vars = vars)
     
     # create new variable to return
-    .result <- match.arg(.result)
+    classes <- sapply(vars, FUN = class)
+    if (missing(.result)) {
+        if (all(classes == "integer")) {
+            .result <- "integer"
+        } else if (all(classes == "numeric")) {
+            .result <- "numeric"
+        } else if (all(classes == "logical")) {
+            .result <- "logical"
+        } else {
+            .result <- "character"
+        }
+    }
     newvar <- vector(mode = .result, length = nrow(oldvar))
 
     # function to check values
@@ -148,14 +160,29 @@ parse_recodes.list <- function(recodes, vars, ...) {
 }
 
 parse_recodes.character <- function(recodes, vars, ...) {
-    
     # car::recode()-style argument
     
-    splitrecodes <- strsplit(gsub("\n|\t", "", recodes), split = ";")[[1]]
-    x <- t(sapply(splitrecodes, function(x) strsplit(x, split = "=")[[1]]))
-    outval <- unname(x[,2])
-    inval1 <- gsub("[c()]", "", unname(x[,1])) # ignore bracketing
-    inval <- unname(sapply(inval1, strsplit, split = ","))
+    splitrecodes <- strsplit(gsub("\n|\t", "", recodes), split = "[[:space:]]*;[[:space:]]*")[[1]]
+    
+    cleanup_recodes <- function(x) {
+        if (any(grepl("^c*(\\()", x))) {
+            x <- gsub("\\)*$", "", gsub("^c*\\(*", "", x))
+        }
+        if (any(grepl("^['\\\"]", x))) {
+            x <- gsub("^['\\\"]", "", x)
+        }
+        if (any(grepl("['\\\"]$", x))) {
+            x <- gsub("['\\\"]$", "", x)
+        }
+        x
+    }
+    
+    x <- t(sapply(splitrecodes, function(x) strsplit(x, split = "[[:space:]]*=[[:space:]]*")[[1]]))
+    # generate `inval`, ignoring bracketing
+    inval <- cleanup_recodes(unname(x[,1]))
+    inval <- unname(sapply(inval, strsplit, split = ","))
+    # generate `outval`
+    outval <- cleanup_recodes(unname(x[,2]))
     
     # check recode lengths
     rlengths <- sapply(inval, length)
@@ -173,45 +200,25 @@ parse_recodes.character <- function(recodes, vars, ...) {
     }
     
     return(list(inval = inval, outval = outval))
-    
-    
+}
+
+parse_specials <- function(x, specials) {
+
     # parse special symbols
-    parse_specials <- function(specials, var) {
-        ## * - wildcard
-        specials[specials == "*"] <- "*"
-        ## NA - NA value
-        specials[specials == "NA"] <- NA
-        ## min - minimum of that variable
-        specials[specials == "min"] <- min(var, na.rm = TRUE)
-        ## max - maximum of that variable
-        specials[specials == "max"] <- max(var, na.rm = TRUE)
-        ## mean - mean of that variable
-        specials[specials == "mean"] <- mean(var, na.rm = TRUE)
-        ## median - median of that variable
-        specials[specials == "median"] <- median(var, na.rm = TRUE)
-        ## : - range of values
-        
-        return(specials)
-    }
+
+    ## * - wildcard
+    specials[specials == "*"] <- "*"
+    ## NA - NA value
+    specials[specials == "NA"] <- NA
+    ## min - minimum of that variable
+    specials[specials == "min"] <- min(x, na.rm = TRUE)
+    ## max - maximum of that variable
+    specials[specials == "max"] <- max(x, na.rm = TRUE)
+    ## mean - mean of that variable
+    specials[specials == "mean"] <- mean(x, na.rm = TRUE)
+    ## median - median of that variable
+    specials[specials == "median"] <- median(x, na.rm = TRUE)
+    ## : - range of values
     
-    if (FALSE) {
-        invalmat <- matrix(character(), nrow = length(inval), ncol = rlengths[1])
-        for(i in 1:ncol(invalmat)) {
-            invalmat[,i] <- parse_specials(sapply(inval, `[`, i), vars[[i]])
-        }
-        
-        
-        sapply(seq_along(newvar), function(x) {
-            v <- sapply(vars, `[`, x)
-            
-            
-            #ranged <- grepl(":", , fixed = TRUE)
-            return(x)
-        })
-        
-        
-        apply(oldvar, 1, function(x) {
-            
-        })
-    }
+    return(specials)
 }

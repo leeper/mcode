@@ -45,24 +45,44 @@
 #' @seealso \code{\link{mergeNA}}
 #' @importFrom stats model.matrix
 #' @export 
-branch <- function(x, f, .fill = 0){
+branch <- function(x, f = x, .fill = 0){
+    if (length(.fill) > 1L) {
+        stop("'.fill' must be a length-1 vector")
+    }
+    if (is.numeric(x) && (!is.numeric(.fill) & !is.na(.fill))) {
+        warning("'.fill' must be a length-1 numeric vector; coercion attempted")
+        .fill <- as.numeric(.fill)
+    }
     if (is.list(f)) {
         f <- interaction(f)
-    } else if (!is.factor(f)) {
+    }
+    if (!is.factor(f)) {
         f <- as.factor(f)
     }
-    out <- x * model.matrix(~ 0 + f)
+    if (!is.numeric(x)) {
+        x1 <- as.factor(x)
+        x <- as.integer(x1)
+        out <- x * model.matrix(~ 0 + f)
+        out[] <- c(.fill,levels(x1))[out+1L]
+    } else {
+        out <- x * model.matrix(~ 0 + f)
+    }
     attr(out,'assign') <- NULL
     attr(out,'contrasts') <- NULL
-    if (!is.na(.fill) && .fill == 0) {
-        return(out)
-    } else if(is.na(.fill)) {
-        out[out == 0] <- NA
-        return(out)
-    } else {
-        out[out == 0] <- .fill
-        return(out)
+    if (is.na(.fill)) {
+        if (is.character(out)) {
+            out[out == "0"] <- NA_character_
+        } else {
+            out[out == 0] <- NA_real_
+        }
+    } else if (.fill == 0) {
+        if (is.character(out)) {
+            out[out == "0"] <- .fill
+        } else {
+            out[out == 0] <- .fill
+        }
     }
+    return(out)
 }
 
 #' @rdname branch
@@ -71,6 +91,9 @@ branch <- function(x, f, .fill = 0){
 #' @param \dots Two or more vectors of equal length, which are to be combined into one new vector. If any two vectors have values at the same index that are not specified in \code{.ignore}, the function will report an error. It is also possible to pass one or more data frames and/or matrices (which will be coerced to a list of column vectors).
 #' @export
 unbranch <- function(..., .ignore = 0, .fill = 0, .factors = c("character", "numeric")){
+    if (length(.fill) > 1L) {
+        stop("'.fill' must be a length-1 vector")
+    }
     vars <- list(...)
     ismat <- sapply(vars, is.matrix)
     for (i in which(ismat)) {
@@ -96,7 +119,7 @@ unbranch <- function(..., .ignore = 0, .fill = 0, .factors = c("character", "num
             vars[classes] <- lapply(vars[classes], as.numeric)
         }
     }
-    lengths <- sapply(vars, length)
+    lengths <- lengths(vars)
     if (any(lengths > lengths[1] | lengths < lengths[1])) {
         stop("Vectors specified have different lengths")
     }
